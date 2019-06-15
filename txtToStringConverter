@@ -1,0 +1,115 @@
+package com.sakamoto.main;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
+
+
+// Code made by Rafael Sakamoto.
+// The main idea of this little project is training logic
+// **************************************************
+// Attention: ONLY SUPPORTS UP TO 8 bits binary code 
+// **************************************************
+
+public class Main {
+
+	public static void main(String[] args) {
+		String input = null;
+		input = JOptionPane.showInputDialog(null, "Insert the Input: ");
+		try {
+			save("txtToBin", stringToBin(input));
+			JOptionPane.showMessageDialog(null, "Original message: " + input + "\nMessage in binary: " + stringToBin(input));
+		} catch (IOException e) {
+			System.out.println(e);
+		}
+	}
+
+	public static void save(String label, String arg) throws IOException {
+		FileWriter file = new FileWriter(label + ".txt");
+		// ****************************************
+		// This block of code is just for isolate each byte by line, its good for demonstration, so I'll not delete.
+		// ****************************************
+		//for(int c = 0; c < arg.length(); c+= 8) {
+		//	for(int c1 = c; c1 < c+8; c1++) {
+		//		file.write(arg.charAt(c1));	// write each byte ( digit/char ) in a individual line
+		//	}
+		//	file.write('\n'); // Just break the line after 8 binary digits ( 8 bits )
+		//}
+		// ****************************************
+		file.write(arg + '\n'); // Write the full binary in one line
+		file.close();
+		JOptionPane.showMessageDialog(null, "Done.");
+	}
+	
+
+	public static String stringToBin(String arg) {
+		int[] dec = stringToDecimalArray(arg);
+		int size = 0;
+		ArrayList<String> stringsInBin = new ArrayList<String>(); 
+		for (int c = 0; c < dec.length; c++) {
+			String string = integerToBin(dec[c], null); 
+			size += string.length();
+			stringsInBin.add(string); 
+		}
+		char[] ch = new char[size]; 
+		int c2 = 0;
+		for (int c = 0; c < stringsInBin.size(); c++) {
+			String string = stringsInBin.get(c);
+			for (int c1 = 0; c1 < string.length(); c1++) {
+				ch[c2] = string.charAt(c1); 
+ 				c2++;
+			}
+		}
+		return new String(ch); 
+	}
+
+	public static int[] stringToDecimalArray(String string) {
+		int[] nums = new int[string.length()];
+		char[] chars = stringToCharArray(string);
+		for (int c = 0; c < string.length(); c++) {
+			nums[c] = (int) chars[c];
+		}
+		return nums;
+	}
+
+	public static char[] stringToCharArray(String string) {
+		char[] chars = new char[string.length()];
+		for (int c = 0; c < string.length(); c++) {
+			chars[c] = string.charAt(c);
+		}
+		return chars;
+	}
+
+	public static String integerToBin(int x, ArrayList<Character> bin) {
+		char[] binario = null;
+		final char zero = '0';
+		final char one = '1';
+		final int bits = 8;
+		if (bin == null) {
+			bin = new ArrayList<Character>();
+		}
+		if (x % 2 == 0) {
+			bin.add(zero);
+		} else {
+			bin.add(one);
+		}
+		if (x != 1) {
+			integerToBin(x / 2, bin);
+		}
+		int deltaSize = bits - bin.size();
+		if (bin.size() < bits) {
+			for (int c1 = 0; c1 < deltaSize; c1++) {
+				bin.add(zero);
+			}
+		}
+		binario = new char[bin.size() + deltaSize];
+		int c1 = 0;
+		for (int c = bin.size() - 1; c >= 0; c--) {
+			binario[c1] = bin.get(c);
+			c1++;
+		}
+		return new String(binario);
+	}
+}
